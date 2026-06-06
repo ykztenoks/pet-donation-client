@@ -7,9 +7,10 @@ const PetContext = createContext()
 export default function PetProvider({ children }) {
   const [pets, setPets] = useState(null)
   const navigate = useNavigate()
+
   const getPets = async () => {
     try {
-      const response = await api.get("/pets")
+      const response = await api.get("/pets?_embed=comments")
       console.log(response.data)
       setPets(response.data)
     } catch (error) {
@@ -39,9 +40,12 @@ export default function PetProvider({ children }) {
     }
   }
 
-  const updatePet = async (id, body) => {
+  const updatePet = async (e, id, body, setIsEditing) => {
+    e.preventDefault()
     try {
       const response = await api.patch(`/pets/${id}`, body)
+      setIsEditing(false)
+      getPets()
     } catch (error) {
       console.log(error)
     }
@@ -59,13 +63,34 @@ export default function PetProvider({ children }) {
     }
   }
 
+  const addComment = async (e, comment, petId, setNewComment) => {
+    e.preventDefault()
+    try {
+      const body = { ...comment, petId }
+      await api.post("/comments", body)
+      getPets()
+      setNewComment({ author: "", comment: "", petId: "" })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getPets()
   }, [])
 
   return (
     <PetContext.Provider
-      value={{ pets, getPets, getPet, createPet, updatePet, deletePet }}
+      value={{
+        pets,
+        addComment,
+        setPets,
+        getPets,
+        getPet,
+        createPet,
+        updatePet,
+        deletePet,
+      }}
     >
       {children}
     </PetContext.Provider>
