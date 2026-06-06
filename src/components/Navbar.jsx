@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import Search from "./Search"
 import paw from "../assets/images/paw.png"
+
 export default function Navbar() {
   return (
     <nav className="h-[12vh] flex mb-[5%] flex-row gap-2 justify-evenly bg-[#8884ff] text-[#D7BCE8] shadow-sm shadow-[#5D576B]/20">

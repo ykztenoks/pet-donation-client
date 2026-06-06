@@ -2,15 +2,18 @@ import { useEffect, useState } from "react"
 import { usePetContext } from "../context/Pet.context"
 import Loading from "../components/Loading"
 import { useParams } from "react-router-dom"
+import CreatePetForm from "../components/PetForm"
 
 const PetDetailPage = () => {
   const [petDetails, setPetDetails] = useState(null)
-  // const [comments, setComments] = useState([])
-  // const [newComment, setNewComment] = useState("")
-  // const [authorName, setAuthorName] = useState("")
-
+  const [newComment, setNewComment] = useState({
+    author: "",
+    petId: "",
+    comment: "",
+  })
+  const [isEditting, setIsEditting] = useState(false)
   const { id } = useParams()
-  const { pets, deletePet } = usePetContext()
+  const { pets, deletePet, addComment } = usePetContext()
 
   useEffect(() => {
     const pet = pets?.find((pet) => pet.id === id)
@@ -158,12 +161,40 @@ const PetDetailPage = () => {
         >
           delete pet 🗑️
         </button>
+
+        <button onClick={() => setIsEditting(!isEditting)}>update pet</button>
+      </div>
+
+      {/* Update form */}
+      {isEditting && (
+        <div>
+          <CreatePetForm
+            petDetails={petDetails}
+            setIsEditting={setIsEditting}
+          />
+        </div>
+      )}
+      <div>
+        <form></form>
       </div>
 
       <div className="border-t border-gray-200 pt-8 mt-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Questions & Comments
         </h2>
+
+        {petDetails.comments.length ? (
+          <div>
+            {petDetails.comments.map((comment) => (
+              <div>
+                <h3>{comment.author}</h3>
+                <p>{comment.comment}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <span>no comments yet</span>
+        )}
 
         {/* <div className="space-y-4 mb-8">
           {pet.comments.length === 0 ? (
@@ -190,8 +221,10 @@ const PetDetailPage = () => {
           )}
         </div> */}
 
-        {/* <form
-          onSubmit={handleCommentSubmit}
+        <form
+          onSubmit={(e) =>
+            addComment(e, newComment, petDetails.id, setNewComment)
+          }
           className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -201,8 +234,14 @@ const PetDetailPage = () => {
               </label>
               <input
                 type="text"
-                value={authorName}
-                onChange={(e) => setAuthorName(e.target.value)}
+                value={newComment.author}
+                name="author"
+                onChange={(e) =>
+                  setNewComment((prev) => ({
+                    ...prev,
+                    [e.target.name]: e.target.value,
+                  }))
+                }
                 placeholder="Leave blank for Anonymous"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
@@ -213,8 +252,14 @@ const PetDetailPage = () => {
               </label>
               <input
                 type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                value={newComment.comment}
+                name="comment"
+                onChange={(e) =>
+                  setNewComment((prev) => ({
+                    ...prev,
+                    [e.target.name]: e.target.value,
+                  }))
+                }
                 placeholder="Ask a question about this pet..."
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
@@ -227,7 +272,7 @@ const PetDetailPage = () => {
           >
             Post Comment
           </button>
-        </form> */}
+        </form>
       </div>
     </div>
   )

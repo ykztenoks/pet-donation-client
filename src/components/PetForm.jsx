@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { usePetContext } from "../context/Pet.context"
-export default function CreatePetForm() {
-  const { createPet } = usePetContext()
+export default function CreatePetForm({ petDetails, setIsEditting }) {
+  const { createPet, updatePet } = usePetContext()
   const [petData, setPetData] = useState({
     name: "",
     species: "Dog",
@@ -41,9 +41,12 @@ export default function CreatePetForm() {
     }))
   }
 
+  console.log(petDetails)
   useEffect(() => {
-    console.log(petData)
-  }, [petData])
+    if (petDetails) {
+      setPetData(petDetails)
+    }
+  }, [petDetails])
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -51,8 +54,16 @@ export default function CreatePetForm() {
         Add a Pet for Adoption
       </h2>
 
-      <form className="space-y-8" onSubmit={(e) => createPet(e, petData)}>
-        {/* --- Basic Information --- */}
+      <form
+        className="space-y-8"
+        onSubmit={(e) => {
+          if (petDetails?.id) {
+            updatePet(e, petDetails.id, petData, setIsEditting)
+          } else {
+            createPet(e, petData)
+          }
+        }}
+      >
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
             Basic Info
