@@ -11,7 +11,7 @@ export default function PetProvider({ children }) {
   const getPets = async () => {
     try {
       const response = await api.get("/pets?_embed=comments")
-      console.log(response.data)
+
       setPets(response.data)
     } catch (error) {
       console.log(error)
