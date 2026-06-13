@@ -184,10 +184,10 @@ const PetDetailPage = () => {
         </h2>
 
         {petDetails.comments.length ? (
-          <div>
+          <div className="flex flex-col gap-4 my-4">
             {petDetails.comments.map((comment) => (
-              <div>
-                <h3>{comment.author}</h3>
+              <div className="border rounded-md p-2">
+                <h3 className="text-2xl font-semibold">{comment.author}</h3>
                 <p>{comment.comment}</p>
               </div>
             ))}
